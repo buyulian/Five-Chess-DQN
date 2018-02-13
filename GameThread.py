@@ -5,6 +5,7 @@ import threading
 import time
 import ReinforceLearning as rl
 import random
+import math
 
 random.seed(time.time())
 class GameThread(threading.Thread):
@@ -31,6 +32,8 @@ class GameThread(threading.Thread):
     step_num = 0
 
     explore = 0.0001
+
+    alpha = 0.9
 
     def __init__(self, thread_id):
         threading.Thread.__init__(self)
@@ -137,12 +140,16 @@ class GameThread(threading.Thread):
     def add_train_data(self):
         y = 0.5
         side = self.now_color
-        a = 0.5/self.step_num
+        a = math.pow(0.5, 1/self.step_num)
         for i in range(self.step_num):
-            y2 =y + a*side*(i+1)
+            y2 =0.5 + math.pow(self.alpha, self.step_num - i - 1)/2
+            if side == -1:
+                y2 = 1 - y2
+            side = -side
+            if random.random() > a*(i+1):
+                continue
             rl.train_data['x'].append(self.to_input(self.history[i]))
             rl.train_data['y'].append([y2, 1 - y2])
-            side = -side
 
     def to_input(self, board):
         c = [[[0.0 for col in range(2)] for col in range(self.line_num)] for row in range(self.line_num)]

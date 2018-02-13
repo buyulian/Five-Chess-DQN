@@ -21,7 +21,7 @@ sess.run(tf.initialize_all_variables())
 
 
 def train():
-    for i in range(100):
+    for i in range(50):
         if i % 10 == 0:
             print("step %d " % (i, ))
         sess.run(train_step, feed_dict={x: train_data['x'], y_: train_data['y']})
