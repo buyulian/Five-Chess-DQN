@@ -136,7 +136,7 @@ class GameThread(threading.Thread):
 
     def add_train_data(self):
         y = 0.5
-        side = 1
+        side = self.now_color
         a = 0.5/self.step_num
         for i in range(self.step_num):
             y2 =y + a*side*(i+1)
