@@ -7,10 +7,10 @@ history_data = []
 
 train_data = {"x": [], "y": []}
 sess = tf.Session()
-x = tf.placeholder(tf.float32, [None, 9, 9, 2])
+x = tf.placeholder(tf.float32, [None, 15, 15, 2])
 y_ = tf.placeholder("float", shape=[None, 2])
 
-x_board = tf.reshape(x, [-1, 9, 9, 2])
+x_board = tf.reshape(x, [-1, 15, 15, 2])
 y_conv = net.convolutional_neural_network(x_board)
 
 # cost = -tf.reduce_sum(tf.square(y_ - y_conv))
@@ -21,7 +21,7 @@ sess.run(tf.initialize_all_variables())
 
 
 def train():
-    for i in range(1000):
+    for i in range(200):
         if i % 100 == 0:
             print("step %d " % (i, ))
         sess.run(train_step, feed_dict={x: train_data['x'], y_: train_data['y']})

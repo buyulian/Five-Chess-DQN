@@ -9,21 +9,21 @@ import ReinforceLearning as rl
 class GameThread(threading.Thread):
 
     screen_width = 640
-    screen_height = 480
+    screen_height = 560
 
-    line_num = 9
-    width = 50
+    line_num = 15
+    width = 36
 
-    piece_width = 20
+    piece_width = 18
 
-    board_offset = [screen_width / 20, screen_height / 20]
+    board_offset = [screen_width / 40, screen_height / 40]
 
     screen = pygame.display.set_mode((screen_width, screen_height), 0, 32)
 
     color_dict = {-1: (255, 255, 255), 1: (0, 0, 0)}
 
     now_color = 1
-    chess_board = [[0 for col in range(9)] for row in range(9)]
+    chess_board = [[0 for col in range(15)] for row in range(15)]
 
     history = []
 
@@ -80,7 +80,7 @@ class GameThread(threading.Thread):
         self.step_num += 1
 
     def copy_self(self):
-        board_copy = [[0 for col in range(9)] for row in range(9)]
+        board_copy = [[0 for col in range(self.line_num)] for row in range(self.line_num)]
         length = len(self.chess_board)
         side = self.now_color
         for i in range(length):
@@ -142,7 +142,7 @@ class GameThread(threading.Thread):
             side = -side
 
     def to_input(self, board):
-        c = [[[0.0 for col in range(2)] for col in range(9)] for row in range(9)]
+        c = [[[0.0 for col in range(2)] for col in range(self.line_num)] for row in range(self.line_num)]
         length = len(board)
         for i in range(length):
             for j in range(length):
@@ -262,7 +262,7 @@ class GameThread(threading.Thread):
 
     def generate_data(self, ):
         rl.train_data = {"x": [], "y": []}
-        num = 100
+        num = 10
         while len(rl.train_data['x']) < num:
             self.next_move()
 
