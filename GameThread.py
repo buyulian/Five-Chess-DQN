@@ -4,8 +4,9 @@ from sys import exit
 import threading
 import time
 import ReinforceLearning as rl
+import random
 
-
+random.seed(time.time())
 class GameThread(threading.Thread):
 
     screen_width = 640
@@ -28,6 +29,8 @@ class GameThread(threading.Thread):
     history = []
 
     step_num = 0
+
+    explore = 0.0001
 
     def __init__(self, thread_id):
         threading.Thread.__init__(self)
@@ -281,6 +284,8 @@ class GameThread(threading.Thread):
                 if board[i][j] == 0:
                     board2[i][j][index] = 1
                     value = rl.get_value(board2)
+                    if random.random() < self.explore:
+                        value += 2
                     if value > max_value:
                         max_value = value
                         max_position = [i, j]
