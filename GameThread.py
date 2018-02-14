@@ -79,15 +79,15 @@ class GameThread(threading.Thread):
 
     def place_pieces(self, x, y):
         self.chess_board[x][y] = self.now_color
+        self.history.append(self.copy_self())
+        self.step_num += 1
         if self.is_win(x, y, self.now_color):
             print("step_num %d" % self.step_num)
             self.add_train_data()
             print("len(x) %d" % len(rl.train_data['x']))
             self.init_board()
             return
-        self.history.append(self.copy_self())
         self.now_color = -self.now_color
-        self.step_num += 1
 
     def copy_self(self):
         board_copy = [[0 for col in range(self.line_num)] for row in range(self.line_num)]
