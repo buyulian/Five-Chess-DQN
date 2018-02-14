@@ -1,5 +1,6 @@
 import tensorflow as tf
 
+
 def weight_variable(shape):
     initial = tf.truncated_normal(shape, stddev=0.1)
     return tf.Variable(initial)
@@ -22,7 +23,7 @@ def max_pool_2x2(x):
 def convolutional_neural_network(input):
 
     #9*9*2
-    W_conv1 = weight_variable([5, 5, 2, 64])
+    W_conv1 = weight_variable([3, 3, 2, 64])
     b_conv1 = bias_variable([64])
 
     h_conv1 = tf.nn.relu(conv2d(input, W_conv1) + b_conv1)
@@ -33,11 +34,16 @@ def convolutional_neural_network(input):
 
     h_conv2 = tf.nn.relu(conv2d(h_conv1, W_conv2) + b_conv2)
 
-    h_pool1 = max_pool_2x2(h_conv2)
-    h_pool1_flat = tf.reshape(h_pool1, [-1, 4 * 4 * 128])
+    #9*9*2
+    W_conv3 = weight_variable([5, 5, 128, 128])
+    b_conv3 = bias_variable([128])
+
+    h_conv3 = tf.nn.relu(conv2d(h_conv2, W_conv3) + b_conv3)
+
+    h_pool1_flat = tf.reshape(h_conv3, [-1, 6 * 6 * 128])
 
     #2*2*128
-    W_fc1 = weight_variable([4 * 4 * 128, 128])
+    W_fc1 = weight_variable([6 * 6 * 128, 128])
     b_fc1 = bias_variable([128])
 
     h_fc1 = tf.nn.relu(tf.matmul(h_pool1_flat, W_fc1) + b_fc1)

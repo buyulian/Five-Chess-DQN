@@ -8,6 +8,8 @@ import random
 import math
 
 random.seed(time.time())
+
+
 class GameThread(threading.Thread):
 
     screen_width = 640
@@ -31,7 +33,7 @@ class GameThread(threading.Thread):
 
     step_num = 0
 
-    explore = 0.0001
+    explore = 0.0005
 
     alpha = 0.9
 
@@ -78,7 +80,9 @@ class GameThread(threading.Thread):
     def place_pieces(self, x, y):
         self.chess_board[x][y] = self.now_color
         if self.is_win(x, y, self.now_color):
+            print("step_num %d" % self.step_num)
             self.add_train_data()
+            print("len(x) %d" % len(rl.train_data['x']))
             self.init_board()
             return
         self.history.append(self.copy_self())
@@ -140,13 +144,13 @@ class GameThread(threading.Thread):
     def add_train_data(self):
         y = 0.5
         side = self.now_color
-        a = math.pow(0.5, 1/self.step_num)
         for i in range(self.step_num):
-            y2 =0.5 + math.pow(self.alpha, self.step_num - i - 1)/2
+            a = math.pow(self.alpha, self.step_num - i - 1)/2
+            y2 =0.5 + a
             if side == -1:
                 y2 = 1 - y2
             side = -side
-            if random.random() > a*(i+1):
+            if random.random() > 2*a:
                 continue
             rl.train_data['x'].append(self.to_input(self.history[i]))
             rl.train_data['y'].append([y2, 1 - y2])
@@ -272,9 +276,10 @@ class GameThread(threading.Thread):
 
     def generate_data(self, ):
         rl.train_data = {"x": [], "y": []}
-        num = 10
+        num = 100
         while len(rl.train_data['x']) < num:
             self.next_move()
+        print("len(x) %d" % len(rl.train_data['x']))
 
     def next_move(self):
         p = self.get_next_move()

@@ -15,13 +15,13 @@ y_conv = net.convolutional_neural_network(x_board)
 
 # cost = -tf.reduce_sum(tf.square(y_ - y_conv))
 cost = -tf.reduce_sum(y_*tf.log(y_conv))
-train_step = tf.train.AdamOptimizer(1e-4).minimize(cost)
+train_step = tf.train.AdamOptimizer(1e-3).minimize(cost)
 
 sess.run(tf.initialize_all_variables())
 
 
 def train():
-    for i in range(50):
+    for i in range(100):
         if i % 10 == 0:
             print("step %d " % (i, ))
         sess.run(train_step, feed_dict={x: train_data['x'], y_: train_data['y']})
