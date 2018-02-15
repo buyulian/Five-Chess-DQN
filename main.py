@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
-import GameThread
+import game_thread
 
-game = GameThread.GameThread(1)
+game = game_thread.GameThread(1)
 game.start()
 game.loop()
 

@@ -3,7 +3,7 @@ from pygame.locals import *
 from sys import exit
 import threading
 import time
-import ReinforceLearning as rl
+import reinforce_learning as rl
 import random
 import math
 
@@ -34,6 +34,10 @@ class GameThread(threading.Thread):
     step_num = 0
 
     explore = 0.0005
+
+    explore_value = 0.5
+
+    is_explore = 0.8
 
     alpha = 0.9
 
@@ -82,12 +86,18 @@ class GameThread(threading.Thread):
         self.history.append(self.copy_self())
         self.step_num += 1
         if self.is_win(x, y, self.now_color):
-            print("step_num %d" % self.step_num)
-            self.add_train_data()
-            print("len(x) %d" % len(rl.train_data['x']))
-            self.init_board()
+            self.win()
             return
         self.now_color = -self.now_color
+
+    def win(self):
+        print("step_num %d" % self.step_num)
+        self.add_train_data()
+        print("len(x) %d" % len(rl.train_data['x']))
+        self.explore += random.random()/10000
+        self.explore_value += random.random()/5
+        print("explore %f, explore_value %f" % (self.explore, self.explore_value))
+        self.init_board()
 
     def copy_self(self):
         board_copy = [[0 for col in range(self.line_num)] for row in range(self.line_num)]
@@ -277,9 +287,11 @@ class GameThread(threading.Thread):
     def generate_data(self, ):
         rl.train_data = {"x": [], "y": []}
         num = 100
+        self.explore = 0
+        self.explore_value = 0
+
         while len(rl.train_data['x']) < num:
             self.next_move()
-        print("len(x) %d" % len(rl.train_data['x']))
 
     def next_move(self):
         p = self.get_next_move()
@@ -297,7 +309,8 @@ class GameThread(threading.Thread):
                     board2[i][j][index] = 1
                     value = rl.get_value(board2)
                     if random.random() < self.explore:
-                        value += 2
+                        value += self.explore_value
+                        print("explore ", value)
                     if value > max_value:
                         max_value = value
                         max_position = [i, j]
