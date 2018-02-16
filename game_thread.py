@@ -94,8 +94,7 @@ class GameThread(threading.Thread):
         print("step_num %d" % self.step_num)
         self.add_train_data()
         print("len(x) %d" % len(rl.train_data['x']))
-        self.explore += random.random()/10000
-        self.explore_value += random.random()/5
+        self.explore_value = 0.01
         print("explore %f, explore_value %f" % (self.explore, self.explore_value))
         self.init_board()
 
@@ -308,9 +307,7 @@ class GameThread(threading.Thread):
                 if board[i][j] == 0:
                     board2[i][j][index] = 1
                     value = rl.get_value(board2)
-                    if random.random() < self.explore:
-                        value += self.explore_value
-                        print("explore ", value)
+                    value += random.random()*self.explore_value
                     if value > max_value:
                         max_value = value
                         max_position = [i, j]
